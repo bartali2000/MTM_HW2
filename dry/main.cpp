@@ -7,9 +7,11 @@ using std::cout, std::endl;
 
 int main() {
 
-    Pirate luffy("Luffy",1000000);
-    Pirate zoro("Zoro",500000);
 
+    Pirate luffy("Luffy",GUM_GUM_FRUIT);
+    Pirate zoro("Zoro");
+    luffy.setBounty(1000000);
+    zoro.setBounty(500000);
     const int crewSize = 2;
     
     Pirate strawHatCrew[2];
