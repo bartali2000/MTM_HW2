@@ -7,4 +7,5 @@ enum class MatamErrorType {
     NotSquareMatrix
 };
 
+
 void exitWithError(MatamErrorType error);
