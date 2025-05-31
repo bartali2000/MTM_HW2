@@ -3,8 +3,8 @@
 #include <cmath>
 #include "Utilities.h"
 /*
- * here is a counter of the times I got cooked and didn't read the assignment correctly
- * counter: 5
+ * here is a counter of the times I was retarded and didn't read the assignment correctly
+ * retard counter: 6
 */
 
 

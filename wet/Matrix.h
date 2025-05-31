@@ -36,6 +36,12 @@ public:
     bool operator==(const Matrix& other); // done
     bool operator!=(const Matrix& other); // done
 
+    // additional required functions
+    Matrix rotateClockwise();
+    Matrix rotateCounterClockwise();
+    Matrix transpose();
+    static double CalcFrobeniusNorm(const Matrix& a);
+
 };
 
 Matrix operator+(const Matrix& a,const Matrix& b); // done
