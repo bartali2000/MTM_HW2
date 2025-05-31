@@ -3,38 +3,38 @@
 using std::ostream;
 
 class Matrix{
-    int* array;
-    int length,width;
+    int* matrix;
+    int rows,columns;
 
 public:
     //constuctors
     Matrix();
-    Matrix(int length, int width, int num = 0);
+    Matrix(int rows, int columns, int num = 0);
 
     //copy constructor
-    Matrix(const Matrix& matrix);
+    Matrix(const Matrix& other);
 
-    //deconstructors
+    //destructors
     ~Matrix();
 
     //operators
-    int& operator()(const int& line,const int& row);
-    Matrix& operator=(const Matrix& matrix);
+    int& operator()(const int& row,const int& column);
+    Matrix& operator=(const Matrix& other);
 
     //printing operators
-    friend ostream& operator<<(const ostream& os,const Matrix& matrix);
+    friend ostream& operator<<(const ostream& os,const Matrix& other);
 
     //arithmetic operators
-    Matrix& operator+=(const Matrix& matrix);
-    Matrix& operator-=(const Matrix& matrix);
-    Matrix& operator*=(const Matrix& matrix);
+    Matrix& operator+=(const Matrix& other);
+    Matrix& operator-=(const Matrix& other);
+    Matrix& operator*=(const Matrix& other);
     Matrix& operator*=(const int& scalar);
     Matrix& operator-();
-    Matrix operator*(const Matrix& matrix);
+    Matrix operator*(const Matrix& other);
 
     //comparison operators
-    bool operator==(const Matrix& matrix);
-    bool operator!=(const Matrix& matrix);
+    bool operator==(const Matrix& other);
+    bool operator!=(const Matrix& other);
 
 };
 
