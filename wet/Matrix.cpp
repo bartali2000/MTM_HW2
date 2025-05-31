@@ -3,9 +3,10 @@
 #include <cmath>
 #include "Utilities.h"
 /*
- * here is a counter of the times i got cooked and didn't read the assignment correctly
+ * here is a counter of the times I got cooked and didn't read the assignment correctly
  * counter: 4
 */
+
 
 
 using std::cout , std::endl;
@@ -53,9 +54,10 @@ Matrix& Matrix::operator=(const Matrix& other){
     if (this == &other) {
         return *this;
     }
-    if (this->rows != other.rows || this->columns != other.columns){
-        exitWithError(MatamErrorType::UnmatchedSizes);
-    }
+    delete[] this->matrix;
+    this->matrix = new int[other.columns * other.rows];
+    this->rows = other.rows;
+    this->columns= other.columns;
     for (int i = 0; i < this->rows*this->columns; ++i) {
         this->matrix[i] = other.matrix[i];
     }
@@ -84,7 +86,29 @@ Matrix& Matrix::operator+=(const Matrix &other){
     for (int i = 0; i < rows*columns; ++i) {
         this->matrix[i] += other.matrix[i];
     }
+    return *this;
 }
+
+Matrix& Matrix::operator*=(const Matrix &other) {
+    if (this->columns != other.rows) {
+        exitWithError(MatamErrorType::UnmatchedSizes);
+    }
+    int sumOfindex = 0;
+    Matrix result = Matrix(this->rows, other.columns);
+
+    for (int row = 0; row < this->rows; ++row) {
+        for (int col = 0; col < other.columns; ++col) { // going to each index of the new matrix
+            for (int curRow = 0; curRow < this->rows; ++curRow) {
+                sumOfindex += this->matrix[row * this->columns + curRow] * other.matrix[other.columns * curRow + col];
+            }
+            result(row, col) = sumOfindex;
+            sumOfindex = 0;
+        }
+    }
+    return  *this = result;
+}
+
+
 
 
 
