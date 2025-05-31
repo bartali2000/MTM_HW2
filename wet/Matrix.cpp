@@ -3,8 +3,8 @@
 #include <cmath>
 #include "Utilities.h"
 /*
- * here is a counter of the times I was retarded and didn't read the assignment correctly
- * retard counter: 6
+ * here is a counter of the times I was retarded
+ * retard counter:8
 */
 
 
@@ -171,3 +171,55 @@ Matrix operator*(const int& scalar, const Matrix& a){
     return a*scalar;
 }
 
+Matrix Matrix::rotateClockwise() {
+    Matrix rotated(this->columns,this->rows);
+    for (int row = 0; row < this->rows; ++row) {
+        for (int col = 0; col < this->columns; ++col) {
+            rotated(col,rotated.columns -row -1) = (*this)(row,col);
+        }
+    }
+    return rotated;
+}
+Matrix Matrix::rotateCounterClockwise() {
+    Matrix rotated = *this;
+    for (int i = 0; i < 3; ++i) {
+        rotated = rotated.rotateClockwise();
+    }
+    return rotated;
+}
+
+Matrix Matrix::transpose() {
+    Matrix transposed(this->columns,this->rows);
+    for (int row = 0; row < this->rows; ++row) {
+        for (int col = 0; col < this->columns; ++col) {
+            transposed(col,row) = (*this)(row,col);
+        }
+    }
+    return transposed;
+}
+
+double Matrix::CalcFrobeniusNorm(const Matrix &a) {
+    double sum = 0;
+    for (int i = 0; i < a.rows* a.columns; ++i) {
+        sum += (a.matrix[i])*(a.matrix[i]);
+    }
+    return sqrt(sum);
+}
+
+double Matrix::CalcDeterminant(const Matrix &a) {}
+
+
+int main(){
+    Matrix m1(3,2);
+
+    m1(0,0) = 1;
+    m1(0,1) = 2;
+    m1(1,0) = 3;
+    m1(1,1) = 4;
+    m1(2,0) = 5;
+    m1(2,1) = 6;
+
+    cout << m1;
+    cout << Matrix::CalcFrobeniusNorm(m1);
+
+}

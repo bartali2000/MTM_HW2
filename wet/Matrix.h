@@ -37,11 +37,11 @@ public:
     bool operator!=(const Matrix& other); // done
 
     // additional required functions
-    Matrix rotateClockwise();
-    Matrix rotateCounterClockwise();
-    Matrix transpose();
+    Matrix rotateClockwise(); //done
+    Matrix rotateCounterClockwise(); //done
+    Matrix transpose(); // done
     static double CalcFrobeniusNorm(const Matrix& a);
-
+    static double CalcDeterminant(const Matrix& a);
 };
 
 Matrix operator+(const Matrix& a,const Matrix& b); // done
