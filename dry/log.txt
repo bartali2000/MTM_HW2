@@ -1,0 +1,1128 @@
+commit ef524a42dfe37ee76bb0785b1aab140fad7c0957
+Author: barak yanay <barak_yanay@Barak-Yanay.>
+Date:   Wed May 28 21:24:59 2025 +0300
+
+    barak_finish_the matrix class
+
+diff --git a/wet/Matrix.cpp b/wet/Matrix.cpp
+new file mode 100644
+index 0000000..da5e4f8
+--- /dev/null
++++ b/wet/Matrix.cpp
+@@ -0,0 +1,275 @@
++//
++// Created by barak on 5/28/2025.
++//
++
++#include "Matrix.h"
++#include "Utilities.h"
++#include <iostream>
++# include "math.h"
++
++using std::cout;
++using std::endl;
++using std::sqrt;
++
++// constructors
++    Matrix::Matrix(const int length, const int width):length(length), width(width){
++    this->matrix = new int[length * width];
++    for (int i = 0; i < length * width; ++i) {
++            this->matrix[i] = 0;
++    }
++}
++
++    Matrix:: Matrix(const int length, const int width, const int def_value):length(length), width(width){
++    this->matrix = new int[length * width];
++    for (int i = 0; i < length * width; ++i) {
++            this->matrix[i] = def_value;
++    }
++}
++
++    Matrix::Matrix() {
++    this->matrix = new int [0];
++}
++
++// destructors
++    Matrix::~Matrix(){
++    delete [] this->matrix;
++}
++
++//copy constructor
++
++    Matrix::Matrix (const Matrix & matrix){
++        this->length = matrix.length;
++        this->width = matrix.width;
++        this-> matrix = new int [this->length * this->width];
++        for (int i = 0; i < matrix.length * matrix.width ; ++i) {
++                this->matrix[i] = matrix.matrix[i];
++        }
++}
++
++// operators
++
++    Matrix& Matrix::operator= (const Matrix& m){
++       //check size
++       if (this->length != m.length ||  this->width != m.width){
++           exitWithError(MatamErrorType:: UnmatchedSizes);
++       }
++       /* unrellevanty
++        this->length = m.length;
++        this->width = m.width;
++        this-> matrix = new int [this->length * this->width];
++        */
++        for (int i = 0; i < m.length * m.width ; ++i) {
++            this->matrix[i] = m.matrix[i];
++        }
++    return *this;
++    }
++
++    int& Matrix::operator() (const int length, const int  width){
++        //check size
++        if (this->length < length ||  this->width < width){
++            exitWithError(MatamErrorType:: OutOfBounds);
++        }
++       return this->matrix[(length * this->width) + width];
++    }
++
++    bool Matrix::operator==(const Matrix& m){
++        //size
++        if (this->length != m.length ||  this->width != m.width){
++            exitWithError(MatamErrorType:: UnmatchedSizes);
++        }
++        // is equal?
++        bool is_equal = true;
++        for (int i = 0; i < this->length * this->width; ++i) {
++            if(this->matrix[i] != m.matrix[i]){
++                is_equal = false;
++            }
++        }
++        return is_equal;
++    }
++
++    bool Matrix::operator!=(const Matrix& m){
++        return !(*this == m);
++    }
++
++    Matrix& Matrix::operator+ (const Matrix& m){
++        if (this->length != m.length ||  this->width != m.width){
++            exitWithError(MatamErrorType:: UnmatchedSizes);
++        }
++        for (int i = 0; i < m.length * m.width ; ++i) {
++            this->matrix[i] += m.matrix[i];
++        }
++        return *this;
++    }
++
++    Matrix& Matrix::operator-(const Matrix& m){
++        if (this->length != m.length ||  this->width != m.width){
++            exitWithError(MatamErrorType:: UnmatchedSizes);
++        }
++        for (int i = 0; i < m.length * m.width ; ++i) {
++            this->matrix[i] -= m.matrix[i];
++        }
++        return *this;
++    }
++
++    Matrix& Matrix::operator-(){
++        for (int i = 0; i < this->length * this->width; ++i) {
++            this->matrix[i] = -this->matrix[i];
++        }
++        return *this;
++    }
++
++    Matrix& Matrix::operator*(const Matrix& m){
++        if (this->width != m.length){
++            exitWithError(MatamErrorType:: UnmatchedSizes);
++        }
++        Matrix mult(this->length, m.width);
++        int sum = 0;
++        int counter = 0;
++        for (int c = 0; c < this->length ; ++c) {
++            for (int i = 0; i < this->length; ++i) {
++                for (int j = 0; j < this->width; ++j) {
++                    sum += this->matrix[(c * this->width) + j] * m.matrix[(j * this->width) + c];
++                }
++                mult.matrix[counter] = sum;
++                sum = 0;
++                counter++;
++            }
++        }
++        delete[] this->matrix;
++        this->length = mult.length;
++        this->width = mult.width;
++        this->matrix = new int[this->length * this->width];
++        for (int i = 0; i < length * width; ++i) {
++            this->matrix[i] = mult.matrix[i];
++        }
++        return *this;
++    }
++
++    Matrix& Matrix::operator*(const int num){
++        for (int i = 0; i < this->length * this->width; ++i) {
++            this->matrix[i] *= num;
++        }
++        return *this;
++    }
++
++    Matrix operator*(const int num, Matrix m){
++        return (m * num);
++    }
++
++    Matrix& Matrix::operator*=(const Matrix& m){
++      // the first try
++        /*  Matrix result = (*this) * m;
++        delete[] this->matrix;
++        this->length = result.length;
++        this->width = result.width;
++        this->matrix = new int[length * width];
++        for (int i = 0; i < length * width; ++i) {
++            this->matrix[i] = result.matrix[i];
++        }*/
++        return *this * m;
++    }
++
++    Matrix& Matrix::operator*=(const int num){
++        return (*this*num);
++    }
++
++    Matrix& Matrix:: operator-=(const Matrix& m){
++        return *this - m;
++    }
++
++    Matrix& Matrix::operator+=(const Matrix& m){
++        return *this + m;
++    }
++
++    //print matrix
++
++    void Matrix::Print_matrix()const{
++    for (int i = 0; i < this->length; ++i) {
++        for (int j = 0; j < this->width ; ++j) {
++            if (j == 0){
++                cout << "|";
++            }
++            cout << this->matrix[i* this->width + j] << "|";
++            if(j == this-> width-1){
++                cout << endl;
++            }
++
++        }
++    }
++    }
++
++    // get functions
++
++    int Matrix::get_width()const{
++        return this->width;
++    }
++
++    int Matrix::get_length()const {
++     return this->length;
++    }
++
++    int Matrix::get_value (const int i, const int j)const{
++        return this->matrix[i * this->width + j];
++    }
++
++
++// extra function
++    Matrix& Matrix:: rotate_Clockwise(){
++        Matrix tmp(this->width, this->length);
++        int count = 0;
++        int index = 0;
++        for (int j = this->length-1; j >= 0; --j) {
++            for (int i = 0; i < tmp.length; ++i) {
++                tmp.matrix[count * this->length+ index] = this->matrix[(j * this->width) + count];
++                count++;
++            }
++            count = 0;
++            index++;
++        }
++        delete[] this->matrix;
++        this->length = tmp.length;
++        this->width = tmp.width;
++        this->matrix = new int[this->length * this->width];
++        for (int i = 0; i < this->length * this->width; ++i) {
++            this->matrix[i] = tmp.matrix[i];
++        }
++        return *this;
++    }
++
++   Matrix & Matrix::rotate_Counter_Clockwise(){
++        Matrix tmp(this->width, this->length);
++        int count = 0;
++        int index = this->width-1;
++        for (int j = 0; j < this->length; ++j) {
++            for (int i = 0; i < this->length; ++i) {
++                tmp.matrix[j * this->length + i] = this->matrix[(count * this->width) + index];
++                count++;
++            }
++            count = 0;
++            index--;
++        }
++        delete[] this->matrix;
++        this->length = tmp.length;
++        this->width = tmp.width;
++        this->matrix = new int[this->length * this->width];
++        for (int i = 0; i < this->length * this->width; ++i) {
++            this->matrix[i] = tmp.matrix[i];
++        }
++        return *this;
++    }
++
++    Matrix Matrix::Transpose(){
++        return this->rotate_Clockwise();
++    }
++
++    double Matrix::Calc_Frobenius_Norm(const Matrix &m){
++        double sum = 0;
++       for (int i = 0; i < m.get_length() ; ++i) {
++           for (int j = 0; j < m.get_width(); ++j) {
++               sum += m.get_value(i,j) * m.get_value(i,j);
++           }
++       }
++        return sqrt(sum);
++    }
++
++
+diff --git a/wet/Matrix.h b/wet/Matrix.h
+new file mode 100644
+index 0000000..ab2a221
+--- /dev/null
++++ b/wet/Matrix.h
+@@ -0,0 +1,81 @@
++//
++// Created by barak on 5/28/2025.
++//
++
++//#ifndef HW2_2425B_MATRIX_H
++//#define HW2_2425B_MATRIX_H
++
++#pragma once
++
++class Matrix {
++    int *matrix;
++    int length;
++    int width;
++
++public:
++    // constructors
++    Matrix(const int length, const int width);
++
++    Matrix(const int length, const int width, const int def_value);
++
++    Matrix();
++
++    // destructors
++    ~Matrix();
++
++    // copy constructor
++    Matrix(const Matrix &matrix);
++
++    // operators
++
++    Matrix &operator=(const Matrix &m);
++
++    int &operator()(const int length, const int width);
++
++    bool operator==(const Matrix &m);
++
++    bool operator!=(const Matrix &m);
++
++    Matrix &operator+(const Matrix &m);
++
++    Matrix &operator-(const Matrix &m);
++
++    Matrix &operator-();
++
++    Matrix &operator*(const Matrix &m);
++
++    Matrix &operator*(const int num);
++
++    Matrix &operator*=(const Matrix &m);
++
++    Matrix &operator*=(const int num);
++
++    Matrix &operator-=(const Matrix &m);
++
++    Matrix &operator+=(const Matrix &m);
++
++
++    //print matrix
++    void Print_matrix() const;
++
++
++    // get function
++    int get_width()const;
++
++    int get_length()const;
++
++    int get_value (const int i, const int j)const;
++
++    //extra function
++    Matrix &rotate_Clockwise();
++
++    Matrix &rotate_Counter_Clockwise();
++
++    Matrix Transpose();
++
++    static double Calc_Frobenius_Norm( const Matrix &m);
++};
++
++    Matrix operator*(const int num, Matrix m);
++
++//#endif //HW2_2425B_MATRIX_H
+diff --git a/wet/main.cpp b/wet/main.cpp
+new file mode 100644
+index 0000000..be294bc
+--- /dev/null
++++ b/wet/main.cpp
+@@ -0,0 +1,32 @@
++//
++// Created by barak on 5/28/2025.
++//
++#include "Matrix.h"
++#include "Utilities.h"
++#include <iostream>
++using namespace std;
++
++ int main (){
++     Matrix n(3,3,1);
++    /* n(16,0) = 5;
++     n(15,1) = 0;
++     n(0,0) = 0;*/
++     n.Print_matrix();
++     double v = Matrix::Calc_Frobenius_Norm(n);
++     cout << v;
++    /* Matrix tr = n.Transpose();
++     tr.Print_matrix();*/
++     /*Matrix m (3,4,4);
++     n *=3;
++     n.Print_matrix();
++     cout<< endl;
++     n.rotate_Counter_Clockwise();
++     n.Print_matrix();
++     cout<< endl;
++     //n *= m;
++   //  n(1,2) = 3;
++     //n *= m;
++     //n.Print_matrix();*/
++
++     return 0;
++ }
+\ No newline at end of file
+
+commit 789c546eaf97c09e5358a12b32117c63a20d6f24
+Author: barak yanay <barak_yanay@Barak-Yanay.>
+Date:   Wed May 28 12:34:57 2025 +0300
+
+    barak_start_of_wet
+
+diff --git a/wet/Utilities.h b/wet/Utilities.h
+index c0c2089..c07958d 100755
+--- a/wet/Utilities.h
++++ b/wet/Utilities.h
+@@ -7,5 +7,4 @@ enum class MatamErrorType {
+     NotSquareMatrix
+ };
+ 
+-
+ void exitWithError(MatamErrorType error);
+
+commit 7fc0c77e7187cbabda5313f8357aa3dcb97284cb
+Author: barak yanay <barak_yanay@Barak-Yanay.>
+Date:   Wed May 28 12:34:05 2025 +0300
+
+    after merge between devilfruit to master
+
+diff --git a/wet/Utilities.h b/wet/Utilities.h
+index c07958d..c0c2089 100755
+--- a/wet/Utilities.h
++++ b/wet/Utilities.h
+@@ -7,4 +7,5 @@ enum class MatamErrorType {
+     NotSquareMatrix
+ };
+ 
++
+ void exitWithError(MatamErrorType error);
+
+commit 69e1903dec65325a07b319a584d403b5f6dd151e
+Author: barak yanay <barak_yanay@Barak-Yanay.>
+Date:   Tue May 27 18:54:01 2025 +0300
+
+    after merge between devilfruit to master
+
+diff --git a/dry/Pirate.cpp b/dry/Pirate.cpp
+index 24a0a0e..5b80f48 100755
+--- a/dry/Pirate.cpp
++++ b/dry/Pirate.cpp
+@@ -10,10 +10,10 @@
+ 
+ //Pirate::Pirate(const string& name, DEVIL_FRUIT devilFruit): name(name), devilFruit(devilFruit) {}
+ 
+-Pirate::Pirate(const string& name,int bounty, DEVIL_FRUIT devilFruit) : name(name),bounty(bounty), devilFruit
++Pirate::Pirate(const string& name,DEVIL_FRUIT devilFruit, int bounty) : name(name),bounty
++(bounty), devilFruit
+ (devilFruit){}
+ 
+-
+ Pirate ::Pirate() {}
+ 
+ void Pirate::setName(const string& name){
+diff --git a/dry/Pirate.h b/dry/Pirate.h
+index 2621943..a05bdb8 100755
+--- a/dry/Pirate.h
++++ b/dry/Pirate.h
+@@ -28,7 +28,7 @@ public:
+ 
+     Pirate ();
+ 
+-    Pirate(const string& name,int bounty = 0, DEVIL_FRUIT devilFruit = DEVIL_FRUIT::NONE);
++    Pirate(const string& name, DEVIL_FRUIT devilFruit = DEVIL_FRUIT::NONE, int bounty = 0);
+ 
+     ~Pirate() = default;
+ 
+
+commit 860ca1901f94539314c1a8e60cbb8cd5676c6663
+Merge: 33efecf 0de188c
+Author: barak yanay <barak_yanay@Barak-Yanay.>
+Date:   Tue May 27 18:47:56 2025 +0300
+
+    Merge branch 'devil_fruit'
+    
+    # Conflicts:
+    #       dry/Pirate.cpp
+    #       dry/Pirate.h
+    #       dry/main.cpp
+
+commit 33efecfb4dc46bfa8a9fb21232af5a90bc840c45
+Author: barak yanay <barak_yanay@Barak-Yanay.>
+Date:   Tue May 27 18:46:10 2025 +0300
+
+    after merge between devilfruit to master
+
+diff --git a/dry/Pirate.cpp b/dry/Pirate.cpp
+index 07c1584..24a0a0e 100755
+--- a/dry/Pirate.cpp
++++ b/dry/Pirate.cpp
+@@ -2,10 +2,17 @@
+ #include "Pirate.h"
+ 
+ 
+-Pirate::Pirate(const string& name, int bounty){
++/*Pirate::Pirate(const string& name, int bounty){
+     this-> name = name;
+     this-> bounty = bounty;
+-}
++}*/
++//Pirate::Pirate(const string& name): name(name){}
++
++//Pirate::Pirate(const string& name, DEVIL_FRUIT devilFruit): name(name), devilFruit(devilFruit) {}
++
++Pirate::Pirate(const string& name,int bounty, DEVIL_FRUIT devilFruit) : name(name),bounty(bounty), devilFruit
++(devilFruit){}
++
+ 
+ Pirate ::Pirate() {}
+ 
+@@ -17,10 +24,18 @@ void Pirate::setName(const string& name){
+ std::string Pirate::getName(){
+     return name;
+ }
+-
++const char* const devilFruitNames[] = {
++        "Gum Gum",
++        "Smoke Smoke",
++        "Flame Flame",
++        "Rumble Rumble",
++        "String String",
++        "Ice Ice",
++        "None"
++};
+ 
+ std::ostream &operator<<(std::ostream &os, const Pirate &pirate){
+-    os << pirate.name <<" "<< pirate.bounty;
++    os << pirate.name <<" "<< pirate.bounty<< " (Devil Fruit: " << devilFruitNames[pirate.devilFruit] << ")";
+     return os;
+ }
+ 
+@@ -30,4 +45,11 @@ void Pirate::setBounty(int bounty){
+ 
+ int Pirate::getBounty(){
+     return this-> bounty;
+-}
+\ No newline at end of file
++}
++
++void Pirate::setDevilFruit(DEVIL_FRUIT devilFruit){
++    this->devilFruit = devilFruit;
++}
++DEVIL_FRUIT Pirate::getDevilFruit(){
++    return devilFruit;
++}
+diff --git a/dry/Pirate.h b/dry/Pirate.h
+index 713d6a3..2621943 100755
+--- a/dry/Pirate.h
++++ b/dry/Pirate.h
+@@ -5,16 +5,31 @@
+ 
+ using std::string;
+ 
++enum DEVIL_FRUIT {
++    GUM_GUM_FRUIT,
++    SMOKE_SMOKE_FRUIT,
++    FLAME_FLAME_FRUIT,
++    RUMBLE_RUMBLE_FRUIT,
++    STRING_STRING_FRUIT,
++    ICE_ICE_FRUIT,
++    NONE
++};
++
+ class Pirate {
+ private:
+     string name;
+     int bounty;
++    DEVIL_FRUIT devilFruit;
+ 
+ public:
+-    Pirate(const string& name, int bounty = 0);
++ //   Pirate(const string& name, int bounty = 0);
++
++  //  Pirate(const string& name);
+ 
+     Pirate ();
+ 
++    Pirate(const string& name,int bounty = 0, DEVIL_FRUIT devilFruit = DEVIL_FRUIT::NONE);
++
+     ~Pirate() = default;
+ 
+     void setName(const string& name);
+@@ -25,5 +40,9 @@ public:
+ 
+     int getBounty();
+ 
++    void setDevilFruit(DEVIL_FRUIT devilFruit);
++
++    DEVIL_FRUIT getDevilFruit();
++
+     friend std::ostream &operator<<(std::ostream &os, const Pirate &pirate);
+ };
+diff --git a/dry/main.cpp b/dry/main.cpp
+index 533f58a..83457d0 100755
+--- a/dry/main.cpp
++++ b/dry/main.cpp
+@@ -7,9 +7,11 @@ using std::cout, std::endl;
+ 
+ int main() {
+ 
+-    Pirate luffy("Luffy",1000000);
+-    Pirate zoro("Zoro",500000);
+ 
++    Pirate luffy("Luffy",GUM_GUM_FRUIT);
++    Pirate zoro("Zoro");
++    luffy.setBounty(1000000);
++    zoro.setBounty(500000);
+     const int crewSize = 2;
+     
+     Pirate strawHatCrew[2];
+
+commit e3f4ba5c53d7e7930f4f477b32886d18ddf50484
+Author: barak yanay <barak_yanay@Barak-Yanay.>
+Date:   Tue May 27 17:24:13 2025 +0300
+
+    barak is the king
+
+diff --git a/dry/Pirate.cpp b/dry/Pirate.cpp
+index c96892e..07c1584 100755
+--- a/dry/Pirate.cpp
++++ b/dry/Pirate.cpp
+@@ -2,8 +2,12 @@
+ #include "Pirate.h"
+ 
+ 
+-Pirate::Pirate(const string& name): name(name) {}
++Pirate::Pirate(const string& name, int bounty){
++    this-> name = name;
++    this-> bounty = bounty;
++}
+ 
++Pirate ::Pirate() {}
+ 
+ void Pirate::setName(const string& name){
+     this->name = name;
+@@ -16,6 +20,14 @@ std::string Pirate::getName(){
+ 
+ 
+ std::ostream &operator<<(std::ostream &os, const Pirate &pirate){
+-    os << pirate.name;
++    os << pirate.name <<" "<< pirate.bounty;
+     return os;
+ }
++
++void Pirate::setBounty(int bounty){
++    this-> bounty = bounty;
++}
++
++int Pirate::getBounty(){
++    return this-> bounty;
++}
+\ No newline at end of file
+diff --git a/dry/Pirate.h b/dry/Pirate.h
+index 7769667..713d6a3 100755
+--- a/dry/Pirate.h
++++ b/dry/Pirate.h
+@@ -8,9 +8,12 @@ using std::string;
+ class Pirate {
+ private:
+     string name;
++    int bounty;
+ 
+ public:
+-    Pirate(const string& name);
++    Pirate(const string& name, int bounty = 0);
++
++    Pirate ();
+ 
+     ~Pirate() = default;
+ 
+@@ -18,5 +21,9 @@ public:
+ 
+     string getName();
+ 
++    void setBounty(int bounty);
++
++    int getBounty();
++
+     friend std::ostream &operator<<(std::ostream &os, const Pirate &pirate);
+ };
+diff --git a/dry/main.cpp b/dry/main.cpp
+index 6b659a1..533f58a 100755
+--- a/dry/main.cpp
++++ b/dry/main.cpp
+@@ -7,8 +7,8 @@ using std::cout, std::endl;
+ 
+ int main() {
+ 
+-    Pirate luffy("Luffy");
+-    Pirate zoro("Zoro");
++    Pirate luffy("Luffy",1000000);
++    Pirate zoro("Zoro",500000);
+ 
+     const int crewSize = 2;
+     
+
+commit 0de188c427bd0feb8f05444af246866a678841d3
+Author: EgbariaMohammad <agbariya@campus.technion.ac.il>
+Date:   Tue May 20 22:48:33 2025 +0300
+
+    [Feature] Add devil fruit feature
+
+diff --git a/dry/Pirate.cpp b/dry/Pirate.cpp
+index c96892e..fc3c314 100755
+--- a/dry/Pirate.cpp
++++ b/dry/Pirate.cpp
+@@ -2,7 +2,7 @@
+ #include "Pirate.h"
+ 
+ 
+-Pirate::Pirate(const string& name): name(name) {}
++Pirate::Pirate(const string& name, DEVIL_FRUIT devilFruit): name(name), devilFruit(devilFruit) {}
+ 
+ 
+ void Pirate::setName(const string& name){
+@@ -10,12 +10,32 @@ void Pirate::setName(const string& name){
+ }
+ 
+ 
++void Pirate::setDevilFruit(DEVIL_FRUIT devilFruit){
++    this->devilFruit = devilFruit;
++}
++
++
+ std::string Pirate::getName(){
+     return name;
+ }
+ 
+ 
++DEVIL_FRUIT Pirate::getDevilFruit(){
++    return devilFruit;
++}
++
++
++const char* const devilFruitNames[] = {
++    "Gum Gum",
++    "Smoke Smoke",
++    "Flame Flame",
++    "Rumble Rumble",
++    "String String",
++    "Ice Ice",
++    "None"
++};
++
+ std::ostream &operator<<(std::ostream &os, const Pirate &pirate){
+-    os << pirate.name;
++    os << pirate.name << " (Devil Fruit: " << devilFruitNames[pirate.devilFruit] << ")";
+     return os;
+ }
+diff --git a/dry/Pirate.h b/dry/Pirate.h
+index 7769667..4c044b1 100755
+--- a/dry/Pirate.h
++++ b/dry/Pirate.h
+@@ -5,18 +5,31 @@
+ 
+ using std::string;
+ 
++enum DEVIL_FRUIT {
++    GUM_GUM_FRUIT,
++    SMOKE_SMOKE_FRUIT,
++    FLAME_FLAME_FRUIT,
++    RUMBLE_RUMBLE_FRUIT,
++    STRING_STRING_FRUIT,
++    ICE_ICE_FRUIT,
++    NONE
++};
++
+ class Pirate {
+ private:
+     string name;
++    DEVIL_FRUIT devilFruit;
+ 
+ public:
+-    Pirate(const string& name);
++    Pirate(const string& name, DEVIL_FRUIT devilFruit = DEVIL_FRUIT::NONE);
+ 
+     ~Pirate() = default;
+ 
+     void setName(const string& name);
++    void setDevilFruit(DEVIL_FRUIT devilFruit);
+ 
+     string getName();
++    DEVIL_FRUIT getDevilFruit();
+ 
+     friend std::ostream &operator<<(std::ostream &os, const Pirate &pirate);
+ };
+diff --git a/dry/main.cpp b/dry/main.cpp
+index 6b659a1..2911f71 100755
+--- a/dry/main.cpp
++++ b/dry/main.cpp
+@@ -7,7 +7,7 @@ using std::cout, std::endl;
+ 
+ int main() {
+ 
+-    Pirate luffy("Luffy");
++    Pirate luffy("Luffy", GUM_GUM_FRUIT);
+     Pirate zoro("Zoro");
+ 
+     const int crewSize = 2;
+
+commit c65429a06733cbe3e92fbec93a5fd12f30fcdf41
+Author: EgbariaMohammad <agbariya@campus.technion.ac.il>
+Date:   Tue May 20 22:49:49 2025 +0300
+
+    Initial Commit
+
+diff --git a/README.md b/README.md
+new file mode 100644
+index 0000000..0a4b9a1
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,7 @@
++# Matam Homework 2
++
++This repository contains all supplied files for the second homework assignment in the course "Introduction to Systems Programming" (234124) at the Technion.
++
++You may find the full instructions for this assignment on the [course's website](https://webcourse.cs.technion.ac.il/02340124/Winter2024-2025).
++
++Good luck and have fun!
+diff --git a/dry/Pirate.cpp b/dry/Pirate.cpp
+new file mode 100755
+index 0000000..c96892e
+--- /dev/null
++++ b/dry/Pirate.cpp
+@@ -0,0 +1,21 @@
++
++#include "Pirate.h"
++
++
++Pirate::Pirate(const string& name): name(name) {}
++
++
++void Pirate::setName(const string& name){
++    this->name = name;
++}
++
++
++std::string Pirate::getName(){
++    return name;
++}
++
++
++std::ostream &operator<<(std::ostream &os, const Pirate &pirate){
++    os << pirate.name;
++    return os;
++}
+diff --git a/dry/Pirate.h b/dry/Pirate.h
+new file mode 100755
+index 0000000..7769667
+--- /dev/null
++++ b/dry/Pirate.h
+@@ -0,0 +1,22 @@
++
++#pragma once
++
++#include <iostream>
++
++using std::string;
++
++class Pirate {
++private:
++    string name;
++
++public:
++    Pirate(const string& name);
++
++    ~Pirate() = default;
++
++    void setName(const string& name);
++
++    string getName();
++
++    friend std::ostream &operator<<(std::ostream &os, const Pirate &pirate);
++};
+diff --git a/dry/main.cpp b/dry/main.cpp
+new file mode 100755
+index 0000000..6b659a1
+--- /dev/null
++++ b/dry/main.cpp
+@@ -0,0 +1,25 @@
++#include <iostream>
++#include "Pirate.h"
++#include <cstring>
++
++using std::cout, std::endl;
++
++
++int main() {
++
++    Pirate luffy("Luffy");
++    Pirate zoro("Zoro");
++
++    const int crewSize = 2;
++    
++    Pirate strawHatCrew[2];
++    strawHatCrew[0] = luffy;
++    strawHatCrew[1] = zoro;
++    
++    cout << "Straw Hat crew contains:" << endl;
++    for (int i = 0; i < crewSize; i++) {
++        cout << strawHatCrew[i] << endl;
++    }
++
++    return 0;
++}
+diff --git a/wet/Utilities.cpp b/wet/Utilities.cpp
+new file mode 100755
+index 0000000..c35944f
+--- /dev/null
++++ b/wet/Utilities.cpp
+@@ -0,0 +1,23 @@
++
++#include "Utilities.h"
++
++#include <iostream>
++
++using std::cerr;
++
++
++void exitWithError(MatamErrorType error) {
++    std::cerr << "Matam Error: ";
++    switch (error) {
++        case MatamErrorType::UnmatchedSizes:
++            std::cerr << "Unmatched matrices" << std::endl;
++            break;
++        case MatamErrorType::OutOfBounds:
++            std::cerr << "Out of bounds" << std::endl;
++            break;
++        case MatamErrorType::NotSquareMatrix:
++            std::cerr << "Matrix must be square to calculate determinant" << std::endl;
++            break;
++    }
++    exit(1);
++}
+diff --git a/wet/Utilities.h b/wet/Utilities.h
+new file mode 100755
+index 0000000..c07958d
+--- /dev/null
++++ b/wet/Utilities.h
+@@ -0,0 +1,10 @@
++
++#pragma once
++
++enum class MatamErrorType {
++    UnmatchedSizes,
++    OutOfBounds,
++    NotSquareMatrix
++};
++
++void exitWithError(MatamErrorType error);
+diff --git a/wet/test.expected b/wet/test.expected
+new file mode 100755
+index 0000000..d107ab8
+--- /dev/null
++++ b/wet/test.expected
+@@ -0,0 +1,19 @@
++|5|6|
++|7|8|
++
++Movie Name: MataMatrix
++Author: Baraa Egbaria
++
++Frame 0:
++|1|2|
++|3|4|
++
++Frame 1:
++|5|6|
++|7|8|
++
++Frame 2:
++|1|2|
++|3|4|
++
++-----End of Movie-----
+diff --git a/wet/tests.cpp b/wet/tests.cpp
+new file mode 100755
+index 0000000..d8bc5a7
+--- /dev/null
++++ b/wet/tests.cpp
+@@ -0,0 +1,130 @@
++
++
++#include <string>
++#include <iostream>
++
++#include "Matrix.h"
++#include "MataMvidia.h"
++
++using namespace std;
++typedef bool (*testFunc)(void);
++
++bool testMatrix(std::ostream& out);
++bool testMataMvidia(std::ostream& out);
++
++
++#define ASSERT_TEST(expr)                                                      \
++do {                                                                           \
++    if (!(expr)) {                                                             \
++        std::cout << "\nAssertion failed at ";                                 \
++        std::cout << __FILE__ << ":" << __LINE__ << ": " << #expr << std::endl;\
++        exit(1);                                                               \
++    }                                                                          \
++} while (0)
++
++
++int main() {
++    testMatrix(std::cout);
++    testMataMvidia(std::cout);
++    return 0;
++}
++
++bool testMatrix(std::ostream& out) {
++    Matrix m1(2,2);
++    Matrix m2(2,2);
++
++    m1(0,0) = 1;
++    m1(0,1) = 2;
++    m1(1,0) = 3;
++    m1(1,1) = 4;
++
++    m2(0,0) = 5;
++    m2(0,1) = 6;
++    m2(1,0) = 7;
++    m2(1,1) = 8;
++
++    Matrix m3 = m1 + m2;
++    ASSERT_TEST(m3(0,0) == 6);
++    ASSERT_TEST(m3(0,1) == 8);
++    ASSERT_TEST(m3(1,0) == 10);
++    ASSERT_TEST(m3(1,1) == 12);
++
++    Matrix m4 = m1 * m2;
++    m4 *= 1;
++    ASSERT_TEST(m4(0,0) == 19);
++    ASSERT_TEST(m4(0,1) == 22);
++    ASSERT_TEST(m4(1,0) == 43);
++    ASSERT_TEST(m4(1,1) == 50);
++
++    m1 += m2;
++    m1 *= m2;
++    m1 -= m2;
++    m1 = m3 - m2;
++
++    ASSERT_TEST(-m1 == -1*m1);
++    ASSERT_TEST(-m1 == m1*-1);
++
++    ASSERT_TEST(m2.rotateClockwise().rotateCounterClockwise() == m2);
++
++    ASSERT_TEST(m1.transpose().transpose() == m1);
++
++    out << m2 << std::endl;
++
++    return true;
++}
++
++bool testMataMvidia(std::ostream& out) {
++    Matrix frame1(2,2);
++    Matrix frame2(2,2);
++
++    frame1(0,0) = 1;
++    frame1(0,1) = 2;
++    frame1(1,0) = 3;
++    frame1(1,1) = 4;
++
++    frame2(0,0) = 5;
++    frame2(0,1) = 6;
++    frame2(1,0) = 7;
++    frame2(1,1) = 8;
++
++    Matrix array[2];
++    array[0] = frame1;
++    array[1] = frame2;
++
++    MataMvidia movie("MataMatrix","Baraa Egbaria",array, 2);
++
++    ASSERT_TEST(movie[0] == frame1);
++
++    movie += frame1;
++
++    ASSERT_TEST(movie[2] == frame1);
++
++    Matrix frame01(2,2);
++    Matrix frame11(2,2);
++
++    frame01(0,0) = 10;
++    frame01(0,1) = 20;
++    frame01(1,0) = 30;
++    frame01(1,1) = 40;
++
++    frame11(0,0) = 50;
++    frame11(0,1) = 60;
++    frame11(1,0) = 70;
++    frame11(1,1) = 80;
++
++    Matrix array1[2];
++    array1[0] = frame01;
++    array1[1] = frame11;
++
++    MataMvidia movie1("MataMatrix and the chamber of secrets","Baraa Egbaria",array1, 2);
++
++    ASSERT_TEST(movie1[0] == frame01);
++
++    //test output
++    out << movie;
++
++    MataMvidia movie2 = movie + movie1;
++    movie += movie1;
++
++    return true;
++}
