@@ -4,6 +4,7 @@
 
 //#ifndef HW2_2425B_MATRIX_H
 //#define HW2_2425B_MATRIX_H
+#include <string>
 
 #pragma once
 
@@ -30,33 +31,40 @@ public:
 
     Matrix &operator=(const Matrix &m);
 
-    int &operator()(const int length, const int width);
+    int & operator()(const int length, const int width);
+
+    const int &operator()(const int length, const int width)const;
 
     bool operator==(const Matrix &m);
 
     bool operator!=(const Matrix &m);
 
-    Matrix &operator+(const Matrix &m);
+    Matrix operator+(const Matrix &m);
 
     Matrix &operator-(const Matrix &m);
 
-    Matrix &operator-();
+    Matrix operator-();
 
-    Matrix &operator*(const Matrix &m);
+    Matrix operator*(const Matrix &m);
 
-    Matrix &operator*(const int num);
+    Matrix operator*(const int num);
 
-    Matrix &operator*=(const Matrix &m);
+    Matrix & operator*=(const Matrix &m);
 
-    Matrix &operator*=(const int num);
+    Matrix operator*=(const int num);
 
     Matrix &operator-=(const Matrix &m);
 
-    Matrix &operator+=(const Matrix &m);
+    Matrix operator+=(const Matrix &m);
 
 
     //print matrix
     void Print_matrix() const;
+
+    //void operator<<(Matrix &m);
+
+   // friend std::ostream& operator <<(Matrix m);
+   friend std::ostream& operator<<(std::ostream& out, const Matrix& m);
 
 
     // get function
@@ -67,15 +75,17 @@ public:
     int get_value (const int i, const int j)const;
 
     //extra function
-    Matrix &rotate_Clockwise();
+    Matrix rotateClockwise();
 
-    Matrix &rotate_Counter_Clockwise();
+    Matrix rotateCounterClockwise();
 
-    Matrix Transpose();
+    Matrix transpose();
 
     static double Calc_Frobenius_Norm( const Matrix &m);
 };
 
     Matrix operator*(const int num, Matrix m);
+
+
 
 //#endif //HW2_2425B_MATRIX_H
