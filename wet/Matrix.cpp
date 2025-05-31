@@ -125,5 +125,49 @@ Matrix &Matrix::operator-=(const Matrix &other) {
     return *this;
 }
 
+Matrix &Matrix::operator*=(const int &scalar) {
+    for (int i = 0; i < this->columns*this->rows; ++i) {
+        this->matrix[i] *= scalar;
+    }
+    return *this;
+}
 
+Matrix Matrix::operator*(const Matrix &other) const{
+    Matrix result = *this;
+    return result *= other;
+}
+
+bool Matrix::operator==(const Matrix &other) {
+    if (this->rows != other.rows || this->columns != other.columns) {
+        return false;
+    }
+    for (int i = 0; i < this->columns*this->rows; ++i) {
+        if(this->matrix[i] != other.matrix[i]){
+            return false;
+        }
+    }
+    return true;
+}
+
+bool Matrix::operator!=(const Matrix &other) {
+    return !(*this == other);
+}
+
+Matrix operator+(const Matrix& a,const Matrix& b){
+    Matrix tmp = a;
+    return tmp += b;
+}
+Matrix operator-(const Matrix& a,const Matrix& b){
+    Matrix tmp = a;
+    return tmp -= b;
+}
+
+Matrix operator*(const Matrix& a,const int scalar){
+    Matrix temp = a;
+    temp *= scalar;
+    return temp;
+}
+Matrix operator*(const int& scalar, const Matrix& a){
+    return a*scalar;
+}
 

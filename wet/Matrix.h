@@ -28,18 +28,18 @@ public:
     Matrix& operator+=(const Matrix& other); // done
     Matrix& operator-=(const Matrix& other); // done
     Matrix& operator*=(const Matrix& other); // done
-    Matrix& operator*=(const int& scalar);
+    Matrix& operator*=(const int& scalar); // done
     Matrix operator-() const; // done;
-    Matrix operator*(const Matrix& other);
+    Matrix operator*(const Matrix& other) const; // done
 
     //comparison operators
-    bool operator==(const Matrix& other);
-    bool operator!=(const Matrix& other);
+    bool operator==(const Matrix& other); // done
+    bool operator!=(const Matrix& other); // done
 
 };
 
-Matrix operator+(const Matrix& a,const Matrix& b);
-Matrix operator-(const Matrix& a,const Matrix& b);
-Matrix operator*(const Matrix& a,const int scalar);
-Matrix operator*(const int& scalar, const Matrix& a);
+Matrix operator+(const Matrix& a,const Matrix& b); // done
+Matrix operator-(const Matrix& a,const Matrix& b); //done
+Matrix operator*(const Matrix& a,const int scalar); //done
+Matrix operator*(const int& scalar, const Matrix& a);// done
 
