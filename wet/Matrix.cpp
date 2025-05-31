@@ -4,7 +4,7 @@
 #include "Utilities.h"
 /*
  * here is a counter of the times I got cooked and didn't read the assignment correctly
- * counter: 4
+ * counter: 5
 */
 
 
@@ -109,6 +109,21 @@ Matrix& Matrix::operator*=(const Matrix &other) {
 }
 
 
+Matrix Matrix::operator-() const {
+    Matrix result(this->rows,this->columns,0);
+    return result -= *this;
+}
+
+
+Matrix &Matrix::operator-=(const Matrix &other) {
+    if (this->rows != other.rows || this->columns != other.columns) {
+        exitWithError(MatamErrorType::UnmatchedSizes);
+    }
+    for (int i = 0; i < this->columns*this->rows; ++i) {
+        this->matrix[i] -= other.matrix[i];
+    }
+    return *this;
+}
 
 
 

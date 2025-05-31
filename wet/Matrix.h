@@ -9,27 +9,27 @@ class Matrix{
 public:
     //constuctors
     Matrix();
-    Matrix(int rows, int columns, int num = 0);
+    Matrix(int rows, int columns, int num = 0); //done
 
     //copy constructor
-    Matrix(const Matrix& other);
+    Matrix(const Matrix& other); // done
 
     //destructors
-    ~Matrix();
+    ~Matrix(); // done
 
     //operators
-    int& operator()(const int& row,const int& column);
-    Matrix& operator=(const Matrix& other);
+    int& operator()(const int& row,const int& column); // done
+    Matrix& operator=(const Matrix& other); // done
 
     //printing operators
-    friend ostream& operator<<(const ostream& os,const Matrix& other);
+    friend ostream& operator<<(const ostream& os,const Matrix& other); // done
 
     //arithmetic operators
-    Matrix& operator+=(const Matrix& other);
-    Matrix& operator-=(const Matrix& other);
-    Matrix& operator*=(const Matrix& other);
+    Matrix& operator+=(const Matrix& other); // done
+    Matrix& operator-=(const Matrix& other); // done
+    Matrix& operator*=(const Matrix& other); // done
     Matrix& operator*=(const int& scalar);
-    Matrix& operator-();
+    Matrix operator-() const; // done;
     Matrix operator*(const Matrix& other);
 
     //comparison operators
