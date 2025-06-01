@@ -272,28 +272,3 @@ int Matrix::CalcSmallerDeterminant(const Matrix& mat, int row, int col) {
     *
     */
 
-int main(){
-    Matrix m1(4,4);
-
-    m1(0,0) = 1;
-    m1(0,1) = 2;
-    m1(0,2) = 3;
-    m1(0,3) = 4;
-    m1(1,0) = 22;
-    m1(1,1) = 2;
-    m1(1,2) = 37;
-    m1(1,3) = 6;
-    m1(2,0) = 7;
-    m1(2,1) = 5;
-    m1(2,2) = 2;
-    m1(2,3) = 7;
-    m1(3,0) = 4;
-    m1(3,1) = 3;
-    m1(3,2) = 9;
-    m1(3,3) = 8;
-
-
-    cout << m1;
-    cout << Matrix::CalcDeterminant(m1);
-
-}
