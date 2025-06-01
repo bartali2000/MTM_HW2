@@ -6,6 +6,8 @@ class Matrix{
     int* matrix;
     int rows,columns;
 
+    // helper function
+    static int CalcSmallerDeterminant(const Matrix& mat, int row, int col) ;
 public:
     //constuctors
     Matrix();
@@ -19,6 +21,8 @@ public:
 
     //operators
     int& operator()(const int& row,const int& column); // done
+    int& operator()(const int& row,const int& column) const;
+
     Matrix& operator=(const Matrix& other); // done
 
     //printing operators
@@ -41,7 +45,7 @@ public:
     Matrix rotateCounterClockwise(); //done
     Matrix transpose(); // done
     static double CalcFrobeniusNorm(const Matrix& a);
-    static double CalcDeterminant(const Matrix& a);
+    static int CalcDeterminant(const Matrix& a);
 };
 
 Matrix operator+(const Matrix& a,const Matrix& b); // done

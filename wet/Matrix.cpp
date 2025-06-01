@@ -4,7 +4,13 @@
 #include "Utilities.h"
 /*
  * here is a counter of the times I was retarded
- * retard counter:8
+ * retard counter:9
+ *
+ * the time i started working on the Accursed Determinant function
+ * stat time: 11:30
+ * finish time: 12:42
+ *
+ *
 */
 
 
@@ -44,6 +50,12 @@ Matrix::~Matrix(){
 
 //operators
 int& Matrix::operator()(const int &row, const int &col) {
+    if(row < 0 || row >= rows || col < 0 || col >= columns){
+        exitWithError(MatamErrorType::OutOfBounds);
+    }
+    return this->matrix[(row*columns) + col];
+}
+int& Matrix::operator()(const int &row, const int &col) const{
     if(row < 0 || row >= rows || col < 0 || col >= columns){
         exitWithError(MatamErrorType::OutOfBounds);
     }
@@ -206,20 +218,82 @@ double Matrix::CalcFrobeniusNorm(const Matrix &a) {
     return sqrt(sum);
 }
 
-double Matrix::CalcDeterminant(const Matrix &a) {}
+int Matrix::CalcDeterminant(const Matrix &a) {
+    if(a.columns != a.rows){
+        exitWithError(MatamErrorType::NotSquareMatrix);
+    }
+    if (a.columns == a.rows && a.rows == 1){
+        return a(0,0);
+    }
+    if(a.rows == 0 || a.columns == 0){
+        return 0;
+    }
+    return Matrix::CalcSmallerDeterminant(a,0,0);
+}
 
+int Matrix::CalcSmallerDeterminant(const Matrix& mat, int row, int col) {
+    if (mat.columns == 2 && mat.rows == 2) {
+        return (mat(0, 0) * mat(1, 1) - mat(1, 0) * mat(0, 1));
+    }
+
+    int det = 0;
+    for (int curCol = 0; curCol < mat.columns; ++curCol) { // going over the first row
+        int sign = (curCol % 2 == 1) ? -1 : 1;
+        //build smaller matrix====================================================
+        Matrix smallerOne(mat.rows - 1, mat.columns - 1);
+        int smallerIndex = 0;
+        for (int matRow = 1; matRow < mat.rows; ++matRow) {  // i dont need to go over the first row because i develop for it
+            for (int matCol = 0; matCol < mat.columns; ++matCol) {
+                if (matCol != curCol) {
+                    smallerOne.matrix[smallerIndex] = mat(matRow, matCol);
+                    smallerIndex++;
+                }
+            }
+        }
+        // ===================================================================================
+        det += sign* mat(0,curCol)*Matrix::CalcSmallerDeterminant(smallerOne,0,0);
+    }
+    return det;
+}
+
+
+/*
+    * Explanation of my indexes:
+    *
+    * row and col are the indexes of the element of which im in right now
+    * ee
+    * curCol is the index in the first row of the matrix i currently have to calculate its det
+    *
+    * smallerOne is the smaller matrix....
+    *
+    * smaller index is the index in the array of the smaller matrix which is filled with the elements that are
+    * not in the row and the col of the element i got
+    *
+    *
+    */
 
 int main(){
-    Matrix m1(3,2);
+    Matrix m1(4,4);
 
     m1(0,0) = 1;
     m1(0,1) = 2;
-    m1(1,0) = 3;
-    m1(1,1) = 4;
-    m1(2,0) = 5;
-    m1(2,1) = 6;
+    m1(0,2) = 3;
+    m1(0,3) = 4;
+    m1(1,0) = 22;
+    m1(1,1) = 2;
+    m1(1,2) = 37;
+    m1(1,3) = 6;
+    m1(2,0) = 7;
+    m1(2,1) = 5;
+    m1(2,2) = 2;
+    m1(2,3) = 7;
+    m1(3,0) = 4;
+    m1(3,1) = 3;
+    m1(3,2) = 9;
+    m1(3,3) = 8;
+
 
     cout << m1;
-    cout << Matrix::CalcFrobeniusNorm(m1);
+    cout << Matrix::CalcDeterminant(m1);
 
 }
