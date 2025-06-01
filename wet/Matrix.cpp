@@ -115,8 +115,8 @@ Matrix& Matrix::operator*=(const Matrix &other) {
 
     for (int row = 0; row < this->rows; ++row) {
         for (int col = 0; col < other.columns; ++col) { // going to each index of the new matrix
-            for (int curRow = 0; curRow < this->rows; ++curRow) {
-                sumOfindex += this->matrix[row * this->columns + curRow] * other.matrix[other.columns * curRow + col];
+            for (int curCul = 0; curCul < this->columns; ++curCul) {
+                sumOfindex += this->matrix[row * this->columns + curCul] * other.matrix[other.columns * curCul + col];
             }
             result(row, col) = sumOfindex;
             sumOfindex = 0;
@@ -279,4 +279,3 @@ int Matrix::CalcSmallerDeterminant(const Matrix& mat, int row, int col) {
     *
     *
     */
-

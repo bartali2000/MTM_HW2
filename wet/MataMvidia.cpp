@@ -84,9 +84,10 @@ MataMvidia MataMvidia::operator+(const MataMvidia &other) const {
 }
 ostream& operator<<(ostream& os,const MataMvidia& other){
     os << "Movie Name: " << other.movieName << endl;
-    os << "Author: " << other.creator << endl;
+    os << "Author: " << other.creator << endl << endl;
     for (int i = 0; i < other.length; ++i) {
         os << "Frame " << i << ':' << endl << other.movie[i] << endl;
     }
+    os << "-----End of Movie-----" << endl;
     return os;
 }
