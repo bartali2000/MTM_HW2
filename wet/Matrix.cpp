@@ -11,6 +11,8 @@
  * finish time: 12:42
  *
  *
+ * need to add cases to functions when matrix is size (0,0)
+ *
 */
 
 
@@ -78,15 +80,18 @@ Matrix& Matrix::operator=(const Matrix& other){
 
 
 //printing operator
-ostream& operator<<(const ostream& os,const Matrix& other){
-    for (int i = 0; i < other.rows; i++) {
-        cout << "|";
-        for (int j = 0; j < other.columns; ++j) {
-            cout << other.matrix[i*other.columns + j] << "|";
-        }
-        cout << endl;
+ostream& operator<<(ostream& os,const Matrix& other){
+    if(other.columns == 0 || other.rows == 0){
+        return os;
     }
-    return cout << endl;
+    for (int i = 0; i < other.rows; i++) {
+        os << "|";
+        for (int j = 0; j < other.columns; ++j) {
+            os << other.matrix[i*other.columns + j] << "|";
+        }
+        os << endl;
+    }
+    return os;
 }
 
 
@@ -211,6 +216,9 @@ Matrix Matrix::transpose() {
 }
 
 double Matrix::CalcFrobeniusNorm(const Matrix &a) {
+    if(a.rows == 0 || a.columns == 0){
+        exitWithError(MatamErrorType::UnmatchedSizes);
+    }
     double sum = 0;
     for (int i = 0; i < a.rows* a.columns; ++i) {
         sum += (a.matrix[i])*(a.matrix[i]);
@@ -226,7 +234,7 @@ int Matrix::CalcDeterminant(const Matrix &a) {
         return a(0,0);
     }
     if(a.rows == 0 || a.columns == 0){
-        return 0;
+        exitWithError(MatamErrorType::NotSquareMatrix);
     }
     return Matrix::CalcSmallerDeterminant(a,0,0);
 }

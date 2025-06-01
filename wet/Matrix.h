@@ -3,7 +3,7 @@
 using std::ostream;
 
 class Matrix{
-    int* matrix;
+    int* matrix = nullptr;
     int rows,columns;
 
     // helper function
@@ -26,7 +26,7 @@ public:
     Matrix& operator=(const Matrix& other); // done
 
     //printing operators
-    friend ostream& operator<<(const ostream& os,const Matrix& other); // done
+    friend ostream& operator<<(ostream& os,const Matrix& other); // done
 
     //arithmetic operators
     Matrix& operator+=(const Matrix& other); // done
