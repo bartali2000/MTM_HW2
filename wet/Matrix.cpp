@@ -284,50 +284,6 @@ using std::sqrt;
         //return *this + m;
     }
 
-    //print matrix
-
-    void Matrix::Print_matrix()const{
-    for (int i = 0; i < this->length; ++i) {
-        for (int j = 0; j < this->width ; ++j) {
-            if (j == 0){
-                cout << "|";
-            }
-            cout << this->matrix[i* this->width + j] << "|";
-            if(j == this-> width-1){
-                cout << endl;
-            }
-        }
-    }
-    }
-
-  /*  void Matrix::operator<<(Matrix &m){
-        for (int i = 0; i < m.length; ++i) {
-            for (int j = 0; j < m.length; ++j) {
-                if (j == 0){
-                    cout << "|";
-                }
-                cout << m.matrix[i* m.width + j] << "|";
-                if(j == m.width - 1){
-                    cout << endl;
-                }
-            }
-        }
-    }*/
-  /* std::ostream& operator<<(Matrix m){
-      std::ostream &print = std::cout;
-       for (int i = 0; i < m.length; ++i) {
-           for (int j = 0; j < m.length; ++j) {
-               if (j == 0) {
-                   print << "|";
-               }
-               print << m.matrix[i * m.width + j] << "|";
-               if (j == m.width - 1) {
-                   print << endl;
-               }
-           }
-       }
-      return print;
-   }*/
 
     std::ostream& operator<<(std::ostream& out, const Matrix& m) {
       if (m.matrix == nullptr && m.length == 0 && m.width == 0) {
@@ -356,20 +312,6 @@ using std::sqrt;
       return out;
     }
 
-
-// get functions
-
-    int Matrix::get_width()const{
-        return this->width;
-    }
-
-    int Matrix::get_length()const {
-     return this->length;
-    }
-
-    int Matrix::get_value (const int i, const int j)const{
-        return this->matrix[i * this->width + j];
-    }
 
 
 // extra function

@@ -58,21 +58,11 @@ public:
     Matrix operator+=(const Matrix &m);
 
 
-    //print matrix
-    void Print_matrix() const;
-
     //void operator<<(Matrix &m);
 
    // friend std::ostream& operator <<(Matrix m);
    friend std::ostream& operator<<(std::ostream& out, const Matrix& m);
 
-
-    // get function
-    int get_width()const;
-
-    int get_length()const;
-
-    int get_value (const int i, const int j)const;
 
     //extra function
     Matrix rotateClockwise();
