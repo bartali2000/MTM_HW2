@@ -37,10 +37,10 @@ public:
     MataMvidia & operator+=( const Matrix &m);
 
     MataMvidia  operator+( const MataMvidia &m);
-
+/*
     // print movie
      void Print_movie();
-
+*/
     //void operator << (const MataMvidia &m);
 
     friend std::ostream& operator<<(std::ostream& out, const MataMvidia& m);

@@ -121,7 +121,7 @@ using std::endl;
     }
 
 
-
+/*
 // print movie
     void MataMvidia::Print_movie(){
         cout << "Movie Name: "<< this->movie_name << endl;
@@ -133,7 +133,7 @@ using std::endl;
         cout << endl;
         }
     }
-
+*/
     /*void MataMvidia::operator << (const MataMvidia &m){
         cout << "Movie Name: "<< m.movie_name << endl;
         cout << "Author: "<< m.creator << endl;
